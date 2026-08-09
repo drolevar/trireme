@@ -378,7 +378,7 @@ class _TorrentStatus extends StatelessWidget {
         .color;
     return Center(
         child: Container(
-            width: 208.0,
+            width: 240.0,
             child: AspectRatio(
                 aspectRatio: 1.0,
                 child: Stack(
@@ -414,86 +414,91 @@ class _TorrentStatus extends StatelessWidget {
     ByteSizeFormatter.of(PreferenceProvider
         .of(context)
         .byteSizeStyle);
-    return Column(children: <Widget>[
-      Container(
-        height: 16.0,
-      ),
-      Text(
-        controller.getProgressPercentage(),
-        style: TextStyle(fontSize: 24.0),
-      ),
-      Text(torrentDetail.state),
-      Container(
-        height: 8.0,
-      ),
-      Row(
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Expanded(
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Icon(
-                        Icons.arrow_downward,
-                        size: 14.0,
-                      ),
-                      Text(Strings.detailDown),
-                    ],
-                  ),
-                  Text(
-                    controller.getDoneSize(formatter),
-                    style: TextStyle(fontSize: 22.0),
-                  ),
-                  Text("of ${controller.getWantedSize(formatter)}"),
-                  Text(
-                    controller.getDownloadSpeed(formatter),
-                    style: TextStyle(fontSize: 16.0),
-                  ),
-                  Text(
-                      "${Strings.detailSeeds} ${torrentDetail.connectedSeeds}"),
-                  Text(
-                    "of ${torrentDetail.totalSeeds}",
-                    style: TextStyle(fontSize: 12.0),
-                  )
-                ]),
-          ),
           Container(
-            width: 4.0,
+            height: 16.0,
           ),
-          Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.arrow_upward,
-                        size: 14.0,
-                      ),
-                      Text(Strings.detailUp),
-                    ],
-                  ),
-                  Text(
-                    controller.getUploadedSize(formatter),
-                    style: TextStyle(fontSize: 22.0),
-                  ),
-                  Text("${Strings.detailRatioLabel} ${controller.getRatio()}"),
-                  Text(
-                    controller.getUploadSpeed(formatter),
-                    style: TextStyle(fontSize: 16.0),
-                  ),
-                  Text(
-                      "${Strings.detailPeers} ${torrentDetail.connectedPeers}"),
-                  Text(
-                    "of ${torrentDetail.totalPeers}",
-                    style: TextStyle(fontSize: 12.0),
-                  )
-                ],
-              ))
+          Text(
+            controller.getProgressPercentage(),
+            style: TextStyle(fontSize: 24.0),
+          ),
+          Text(torrentDetail.state),
+          Container(
+            height: 8.0,
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Icon(
+                          Icons.arrow_downward,
+                          size: 14.0,
+                        ),
+                        Text(Strings.detailDown),
+                      ],
+                    ),
+                    Text(
+                      controller.getDoneSize(formatter),
+                      style: TextStyle(fontSize: 22.0),
+                    ),
+                    Text("of ${controller.getWantedSize(formatter)}"),
+                    Text(
+                      controller.getDownloadSpeed(formatter),
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                    Text(
+                        "${Strings.detailSeeds} ${torrentDetail.connectedSeeds}"),
+                    Text(
+                      "of ${torrentDetail.totalSeeds}",
+                      style: TextStyle(fontSize: 12.0),
+                    )
+                  ]),
+              Container(
+                width: 16.0,
+              ),
+              Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Icon(
+                          Icons.arrow_upward,
+                          size: 14.0,
+                        ),
+                        Text(Strings.detailUp),
+                      ],
+                    ),
+                    Text(
+                      controller.getUploadedSize(formatter),
+                      style: TextStyle(fontSize: 22.0),
+                    ),
+                    Text("${Strings.detailRatioLabel} ${controller.getRatio()}"),
+                    Text(
+                      controller.getUploadSpeed(formatter),
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                    Text(
+                        "${Strings.detailPeers} ${torrentDetail.connectedPeers}"),
+                    Text(
+                      "of ${torrentDetail.totalPeers}",
+                      style: TextStyle(fontSize: 12.0),
+                    )
+                  ])
+            ],
+          ),
         ],
       ),
-    ]);
+    );
   }
 }
