@@ -1,0 +1,24 @@
+name: Flutter Build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.16.4'
+        channel: 'stable'
+    - run: flutter pub get
+    - run: flutter analyze
+    - run: flutter build apk --release
+    - uses: actions/upload-artifact@v3
+      with:
+        name: app-release.apk
+        path: build/app/outputs/flutter-apk/app-release.apk
