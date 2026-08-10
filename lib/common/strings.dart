@@ -76,6 +76,8 @@ class Strings {
   static String homeAddTorrentByFile = "File";
   static String homeAddTorrentByUrl = "Link";
   static String homeAddTorrentByInfoHash = "Infohash";
+  static String homeSessionPaused = "Session paused";
+  static String homeResumeSession = "RESUME";
 
   static String addTorrentTitle = "Add Torrent";
   static String addTorrentUrlHint = "Enter torrent URL";
@@ -117,6 +119,7 @@ class Strings {
   static String detailCommentLabel = "Comment:";
   static String detailCompletedLabel = "Completed:";
   static String detailSeedingTime = "Seeding time:";
+  static String detailLastSeenComplete = "Last seen complete:";
   static String detailStatusSubHeader = "STATUS";
   static String detailRatioLabel = "Ratio";
   static String detailUp = "Up";

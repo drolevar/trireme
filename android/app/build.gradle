@@ -54,23 +54,17 @@ android {
     }
 
     signingConfigs {
-        github {
-            def keystorePropertiesFile = rootProject.file("key.properties")
-            def keystoreProperties = new Properties()
+        def keystorePropertiesFile = rootProject.file("key.properties")
+        if (keystorePropertiesFile.exists()) {
+            github {
+                def keystoreProperties = new Properties()
+                keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
-            if (!keystorePropertiesFile.exists()) return
-
-            keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile file(keystoreProperties['storeFile'])
-            storePassword keystoreProperties['storePassword']
-        }
-        unsigned {
-            keyAlias = ""
-            keyPassword = ""
-            storePassword = ""
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+            }
         }
     }
 
@@ -79,12 +73,14 @@ android {
     productFlavors {
         github {
             dimension "deploy"
-            signingConfig signingConfigs.github
+            def keystorePropertiesFile = rootProject.file("key.properties")
+            if (keystorePropertiesFile.exists()) {
+                signingConfig signingConfigs.github
+            }
         }
 
         fdroid {
             dimension "deploy"
-            signingConfig signingConfigs.unsigned
         }
     }
 

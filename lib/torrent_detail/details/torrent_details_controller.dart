@@ -39,13 +39,13 @@ class TorrentDetailsController {
     var since = DateTime.now().difference(addedDate);
 
     if (since.inDays > 365) {
-      return "${DateFormat.yMMMd().add_jm().format(addedDate)}";
+      return DateFormat.yMMMd().add_jm().format(addedDate);
     } else if (since.inDays > 30) {
-      return "${DateFormat("MMM d").add_jm().format(addedDate)}";
+      return DateFormat("MMM d").add_jm().format(addedDate);
     } else if (since.inHours > 24) {
-      return "${DateFormat("EEEEE, MMM d").add_jm().format(addedDate)}";
+      return DateFormat("EEEEE, MMM d").add_jm().format(addedDate);
     } else {
-      return "${DateFormat.jms().format(addedDate)}";
+      return DateFormat.jms().format(addedDate);
     }
   }
 
@@ -53,17 +53,17 @@ class TorrentDetailsController {
     if (torrentDetail.timeCompleted == null) return "";
 
     var completedDate = DateTime.fromMillisecondsSinceEpoch(
-        torrentDetail.timeCompleted.toInt() * 1000);
+        torrentDetail.timeCompleted!.toInt() * 1000);
     var since = DateTime.now().difference(completedDate);
 
     if (since.inDays > 365) {
-      return "${DateFormat.yMMMd().add_jm().format(completedDate)}";
+      return DateFormat.yMMMd().add_jm().format(completedDate);
     } else if (since.inDays > 30) {
-      return "${DateFormat("MMM d").add_jm().format(completedDate)}";
+      return DateFormat("MMM d").add_jm().format(completedDate);
     } else if (since.inHours > 24) {
-      return "${DateFormat("EEEEE, MMM d").add_jm().format(completedDate)}";
+      return DateFormat("EEEEE, MMM d").add_jm().format(completedDate);
     } else {
-      return "${DateFormat.jms().format(completedDate)}";
+      return DateFormat.jms().format(completedDate);
     }
   }
 
@@ -130,6 +130,21 @@ class TorrentDetailsController {
           tersity: DurationTersity.minute, abbreviated: true);
     } else {
       return prettyDuration(seedingTime, abbreviated: true);
+    }
+  }
+
+  String getLastSeenComplete() {
+    var lastSeenComplete = DateTime.fromMillisecondsSinceEpoch(torrentDetail.lastSeenComplete * 1000);
+    var since = DateTime.now().difference(lastSeenComplete);
+
+    if (since.inDays > 365) {
+      return DateFormat.yMMMd().add_jm().format(lastSeenComplete);
+    } else if (since.inDays > 30) {
+      return DateFormat("MMM d").add_jm().format(lastSeenComplete);
+    } else if (since.inHours > 24) {
+      return DateFormat("EEEEE, MMM d").add_jm().format(lastSeenComplete);
+    } else {
+      return DateFormat.jms().format(lastSeenComplete);
     }
   }
 }

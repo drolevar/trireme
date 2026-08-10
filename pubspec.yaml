@@ -1,16 +1,17 @@
 name: trireme
 
 dependencies:
+  win32: ^5.5.0
   flutter:
     sdk: flutter
 
-  charts_flutter: "^0.12.0"
+  community_charts_flutter: ^1.0.1
   convert: "^3.0.2"
 
   trireme_client:
     git:
       url: https://github.com/teal77/trireme_client.git
-      ref: "v1.3.2"
+      ref: "v1.3.6"
 
   rxdart: "0.27.5"
 
@@ -25,6 +26,7 @@ dependencies:
   duration: "^3.0.11"
 
 dev_dependencies:
+  win32: ^5.5.0
   flutter_lints: "^2.0.1"
 
 environment:
@@ -74,3 +76,11 @@ flutter:
   #
   # For details regarding fonts from package dependencies, 
   # see https://flutter.io/custom-fonts/#from-packages
+
+
+
+
+
+
+dependency_overrides:
+  win32: 5.2.0
