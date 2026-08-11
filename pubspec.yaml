@@ -82,5 +82,9 @@ flutter:
 
 
 
+
+
 dependency_overrides:
   win32: 5.2.0
+  shared_preferences_android: 2.3.0
+  path_provider_android: 2.3.0

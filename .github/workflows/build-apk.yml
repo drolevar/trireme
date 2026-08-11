@@ -32,6 +32,11 @@ jobs:
       - name: Build APK
         run: flutter build apk --release --flavor github
 
+
+      - name: Sign APK
+        run: |
+          $ANDROID_HOME/build-tools/34.0.0/apksigner sign --ks android/app/release.jks --ks-pass pass:trireme --key-pass pass:trireme --ks-key-alias release --v1-signing-enabled true --v2-signing-enabled true build/app/outputs/flutter-apk/app-github-release.apk
+
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
