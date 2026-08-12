@@ -5,6 +5,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Losing the connection to the daemon is reported again. The "Lost connection
+  to daemon" banner could only appear if a screen was opened while the daemon
+  was already unreachable; a connection that dropped while you were watching a
+  screen was never reported at all, because the retry that keeps polling alive
+  was also discarding the errors.
+- Opening a torrent's details with no working connection shows an error instead
+  of a progress bar that never finishes.
+- The "Session paused" banner no longer appears when the connection drops. A
+  hidden banner was still drawing itself over the banner above it, so losing
+  the connection showed the disconnected banner with the session-paused card
+  painted on top of it.
+- The pause/resume session button in the navigation drawer no longer acts on a
+  guess. It assumed the session was paused until the daemon said otherwise, so
+  it often showed "resume" for a running session and tapping it sent a command
+  the daemon ignored, which looked like the button was dead. It is now disabled
+  until the real state arrives, and it reverts if the daemon rejects the change.
+- Free space in the navigation drawer is fetched whenever the drawer opens.
+  Previously it was skipped in cases where the drawer was not yet marked open,
+  and a failed fetch was never reported or retried.
+
 ### Changed
 - Minimum Android version is now 7.0 (API 24), pinned explicitly. It
   previously tracked whichever Flutter SDK built the app, so release builds
@@ -18,16 +39,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   bigger, but the app now installs smaller and starts faster, because the
   system maps those libraries directly out of the APK instead of extracting a
   second copy.
-
-### Fixed
-- The pause/resume session button in the navigation drawer no longer acts on a
-  guess. It assumed the session was paused until the daemon said otherwise, so
-  it often showed "resume" for a running session and tapping it sent a command
-  the daemon ignored, which looked like the button was dead. It is now disabled
-  until the real state arrives, and it reverts if the daemon rejects the change.
-- Free space in the navigation drawer is fetched whenever the drawer opens.
-  Previously it was skipped in cases where the drawer was not yet marked open,
-  and a failed fetch was never reported or retried.
 
 ## [1.4.1] - 2023-12-28
 ### Fixed

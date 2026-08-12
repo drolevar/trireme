@@ -39,7 +39,7 @@ class _DisconnectedBannerState extends State<DisconnectedBanner>
 
   late AnimationController controller;
   late TriremeRepository repository;
-  late StreamSubscription subscription;
+  StreamSubscription? subscription;
   var isBannerShowing = false;
   var enableRetry = true;
 
@@ -54,6 +54,10 @@ class _DisconnectedBannerState extends State<DisconnectedBanner>
   void didChangeDependencies() {
     super.didChangeDependencies();
     repository = RepositoryProvider.repositoryOf(context);
+    // didChangeDependencies runs more than once, and each run used to
+    // leave the previous subscription live -- three of them were seen
+    // on one screen, so every error fired the handler three times.
+    subscription?.cancel();
     subscription = errorStreamDebounced().listen((e) async {
       if (!isBannerShowing) {
         await checkConnectionAndShowBanner();
@@ -68,15 +72,8 @@ class _DisconnectedBannerState extends State<DisconnectedBanner>
   @override
   Widget build(BuildContext context) {
     final animation = CurvedAnimation(parent: controller, curve: Curves.ease);
-    return AnimatedBuilder(
+    return CollapsibleBanner(
       animation: animation,
-      builder: (context, child) => TickerMode(
-          enabled: animation.value > 0.0,
-          child: Align(
-            alignment: AlignmentDirectional.bottomEnd,
-            heightFactor: animation.value,
-            child: child,
-          )),
       child: TriremeBanner(Strings.homeDisconnectedInfo, [
         TextButton(
           onPressed: enableRetry ? onRetryPressed : null,
@@ -89,7 +86,7 @@ class _DisconnectedBannerState extends State<DisconnectedBanner>
   @override
   void dispose() {
     controller.dispose();
-    subscription.cancel();
+    subscription?.cancel();
     super.dispose();
   }
 
@@ -110,6 +107,15 @@ class _DisconnectedBannerState extends State<DisconnectedBanner>
 
   Future checkConnectionAndShowBanner() async {
     if (checking) return;
+    if (!repository.isReady()) {
+      // No client has been attached yet. Polls fail by definition in that
+      // window, and getDaemonInfo would throw on the null client and be read
+      // as a lost connection -- so the banner would flash during startup.
+      // A connection that drops later keeps its client, so this only skips
+      // the pre-connection window.
+      Log.v(_tag, "No client yet, not checking");
+      return;
+    }
     Log.v(_tag, "Checking connection to daemon");
     checking = true;
     try {

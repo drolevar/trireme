@@ -37,7 +37,7 @@ class _SessionPausedBannerState extends State<SessionPausedBanner>
 
   late AnimationController controller;
   late TriremeRepository repository;
-  late StreamSubscription subscription;
+  StreamSubscription? subscription;
   var isBannerShowing = false;
 
   @override
@@ -51,6 +51,10 @@ class _SessionPausedBannerState extends State<SessionPausedBanner>
   void didChangeDependencies() {
     super.didChangeDependencies();
     repository = RepositoryProvider.repositoryOf(context);
+    // didChangeDependencies runs more than once, and each run used to
+    // leave the previous subscription live -- three of them were seen
+    // on one screen, so every event fired the handler three times.
+    subscription?.cancel();
     subscription = repository
         .getDelugeRpcEvents()
         .where((e) => e is SessionPausedEvent || e is SessionResumedEvent)
@@ -67,15 +71,8 @@ class _SessionPausedBannerState extends State<SessionPausedBanner>
   @override
   Widget build(BuildContext context) {
     final animation = CurvedAnimation(parent: controller, curve: Curves.ease);
-    return AnimatedBuilder(
+    return CollapsibleBanner(
       animation: animation,
-      builder: (context, child) => TickerMode(
-          enabled: animation.value > 0.0,
-          child: Align(
-            alignment: AlignmentDirectional.bottomEnd,
-            heightFactor: animation.value,
-            child: child,
-          )),
       child: TriremeBanner(Strings.homeSessionPaused, [
         TextButton(
           onPressed: onResumePressed,
@@ -88,7 +85,7 @@ class _SessionPausedBannerState extends State<SessionPausedBanner>
   @override
   void dispose() {
     controller.dispose();
-    subscription.cancel();
+    subscription?.cancel();
     super.dispose();
   }
 
