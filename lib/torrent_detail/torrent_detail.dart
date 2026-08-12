@@ -34,7 +34,7 @@ import 'options/torrent_options.dart';
 class TorrentDetailPage extends StatefulWidget {
   final TorrentItem torrentItem;
 
-  TorrentDetailPage(this.torrentItem);
+  const TorrentDetailPage(this.torrentItem, {super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -100,7 +100,7 @@ mixin TabControllerAnimationProviderMixin<T extends StatefulWidget> on State<T>
   void didChangeDependencies() {
     super.didChangeDependencies();
     tabControllerAnimation?.removeListener(_onAnimationChanged);
-    tabControllerAnimation = DefaultTabController.of(context)!.animation;
+    tabControllerAnimation = DefaultTabController.of(context).animation;
     tabControllerAnimation?.addListener(_onAnimationChanged);
   }
 

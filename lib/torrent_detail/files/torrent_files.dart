@@ -19,10 +19,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:rxdart/rxdart.dart';
 
 import 'package:trireme_client/deserialization.dart';
 
@@ -37,7 +35,7 @@ import 'torrent_files_controller.dart';
 class TorrentFileListPage extends StatefulWidget {
   final String torrentId;
 
-  TorrentFileListPage(this.torrentId);
+  const TorrentFileListPage(this.torrentId, {super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -92,7 +90,7 @@ class _TorrentFileList extends StatefulWidget {
   final TorrentFiles torrentFiles;
   final File root;
 
-  _TorrentFileList(
+  const _TorrentFileList(
       {Key? key,
       required this.torrentId,
       required this.torrentFiles,
@@ -176,33 +174,33 @@ class _TorrentFileListState extends State<_TorrentFileList>
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: selectedFiles.isEmpty
                   ? <Widget>[
-                      Expanded(
+                      const Expanded(
                         child: SizedBox(),
                       ),
                       _getSortingButton(_onSortByChanged),
                     ]
                   : <Widget>[
                       IconButton(
-                        icon: Icon(Icons.select_all),
+                        icon: const Icon(Icons.select_all),
                         tooltip: Strings.detailFileSelectAllTooltip,
                         onPressed: disableButtons ? null : selectAll,
                       ),
                       IconButton(
-                        icon: Icon(Icons.block),
+                        icon: const Icon(Icons.block),
                         tooltip: Strings.detailFileDoNotDownload,
                         onPressed: disableButtons
                             ? null
                             : () => setPrioritiesForSelectedFiles(0),
                       ),
                       IconButton(
-                        icon: Icon(Icons.play_arrow),
+                        icon: const Icon(Icons.play_arrow),
                         tooltip: Strings.detailFileNormal,
                         onPressed: disableButtons
                             ? null
                             : () => setPrioritiesForSelectedFiles(1),
                       ),
                       IconButton(
-                        icon: Icon(Icons.fast_forward),
+                        icon: const Icon(Icons.fast_forward),
                         tooltip: Strings.detailFileHigh,
                         onPressed: disableButtons
                             ? null
@@ -237,8 +235,8 @@ class _TorrentFileListState extends State<_TorrentFileList>
     var children = <Widget>[];
     if (!currentDirectory.isRoot) {
       children.add(ListTile(
-        leading: Icon(Icons.folder),
-        title: Text(".."),
+        leading: const Icon(Icons.folder),
+        title: const Text(".."),
         onTap: onParentClicked,
       ));
     }

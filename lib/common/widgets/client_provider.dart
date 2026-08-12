@@ -26,7 +26,7 @@ class ClientProvider extends StatefulWidget {
   final Widget? child;
   final TriremeClient? client;
 
-  ClientProvider({Key? key, this.child, this.client}) : super(key: key);
+  const ClientProvider({Key? key, this.child, this.client}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => ClientProviderState();
@@ -59,7 +59,7 @@ class ClientProviderState extends State<ClientProvider>
   void initState() {
     super.initState();
     _client = widget.client;
-    WidgetsBinding.instance!.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
@@ -94,7 +94,7 @@ class ClientProviderState extends State<ClientProvider>
 
   @override
   void dispose() {
-    WidgetsBinding.instance!.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     _client?.dispose();
     super.dispose();
   }
@@ -103,7 +103,7 @@ class ClientProviderState extends State<ClientProvider>
 class _ClientProviderInherited extends InheritedWidget {
   final ClientProviderState? state;
 
-  _ClientProviderInherited({Key? key, this.state, required Widget child})
+  const _ClientProviderInherited({Key? key, this.state, required Widget child})
       : super(key: key, child: child);
 
   @override

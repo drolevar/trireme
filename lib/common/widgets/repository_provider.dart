@@ -25,7 +25,7 @@ import 'client_provider.dart';
 class RepositoryProvider extends StatelessWidget {
   final Widget child;
 
-  RepositoryProvider({Key? key, required this.child}) : super(key: key);
+  const RepositoryProvider({Key? key, required this.child}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +53,7 @@ class RepositoryProvider extends StatelessWidget {
 class _RepositoryProviderInternal extends StatefulWidget {
   final Widget child;
 
-  _RepositoryProviderInternal({Key? key, required this.child})
+  const _RepositoryProviderInternal({Key? key, required this.child})
       : super(key: key);
 
   @override
@@ -77,7 +77,7 @@ class RepositoryProviderState extends State<_RepositoryProviderInternal>
   void initState() {
     super.initState();
     repository ??= TriremeRepository();
-    WidgetsBinding.instance!.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
@@ -107,7 +107,7 @@ class RepositoryProviderState extends State<_RepositoryProviderInternal>
 
   @override
   void dispose() {
-    WidgetsBinding.instance!.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     repository?.dispose();
     super.dispose();
   }
@@ -116,7 +116,7 @@ class RepositoryProviderState extends State<_RepositoryProviderInternal>
 class _RepositoryProviderInherited extends InheritedWidget {
   final RepositoryProviderState state;
 
-  _RepositoryProviderInherited({Key? key, required this.state, required Widget child})
+  const _RepositoryProviderInherited({Key? key, required this.state, required Widget child})
       : super(key: key, child: child);
 
   @override
