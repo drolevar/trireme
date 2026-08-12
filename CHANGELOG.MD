@@ -26,6 +26,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Previously it was skipped in cases where the drawer was not yet marked open,
   and a failed fetch was never reported or retried.
 
+### Added
+- A debug screen under Settings, showing whether a client is attached, how many
+  errors the app has seen and the most recent one, buttons that call the daemon
+  directly, and an in-app log that can be copied to the clipboard.
+
 ### Changed
 - Minimum Android version is now 7.0 (API 24), pinned explicitly. It
   previously tracked whichever Flutter SDK built the app, so release builds
