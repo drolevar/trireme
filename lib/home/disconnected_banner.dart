@@ -59,6 +59,7 @@ class _DisconnectedBannerState extends State<DisconnectedBanner>
     // on one screen, so every error fired the handler three times.
     subscription?.cancel();
     subscription = errorStreamDebounced().listen((e) async {
+      Log.d(_tag, "Error reached banner (showing=$isBannerShowing): $e");
       if (!isBannerShowing) {
         await checkConnectionAndShowBanner();
         while (mounted && isBannerShowing) {
@@ -120,9 +121,10 @@ class _DisconnectedBannerState extends State<DisconnectedBanner>
     checking = true;
     try {
       await repository.getDaemonInfo();
+      Log.d(_tag, "Daemon reachable, hiding banner");
       hideBanner();
     } catch (e) {
-      Log.e(_tag, e.toString());
+      Log.e(_tag, "Daemon unreachable, showing banner: $e");
       showBanner();
     } finally {
       checking = false;

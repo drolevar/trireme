@@ -35,6 +35,8 @@ class SessionPausedBanner extends StatefulWidget {
 class _SessionPausedBannerState extends State<SessionPausedBanner>
     with SingleTickerProviderStateMixin {
 
+  static const _tag = "_SessionPausedBannerState";
+
   late AnimationController controller;
   late TriremeRepository repository;
   StreamSubscription? subscription;
@@ -59,7 +61,9 @@ class _SessionPausedBannerState extends State<SessionPausedBanner>
         .getDelugeRpcEvents()
         .where((e) => e is SessionPausedEvent || e is SessionResumedEvent)
         .listen((e) async {
+      Log.d(_tag, "Session event: ${e.runtimeType}");
       if (mounted && e is SessionPausedEvent) {
+        Log.d(_tag, "Showing banner because of a paused event");
         showBanner();
       } else if (mounted && e is SessionResumedEvent) {
         hideBanner();
@@ -94,14 +98,22 @@ class _SessionPausedBannerState extends State<SessionPausedBanner>
   }
 
   void checkAndShowBanner() async {
-    if (!repository.isReady()) {
-      await repository.readiness();
-    }
-    final isPaused = await repository.isSessionPaused();
-    if (isPaused) {
-      showBanner();
-    } else {
-      hideBanner();
+    try {
+      if (!repository.isReady()) {
+        await repository.readiness();
+      }
+      final isPaused = await repository.isSessionPaused();
+      Log.d(_tag, "Daemon reports isSessionPaused=$isPaused");
+      if (isPaused) {
+        Log.d(_tag, "Showing banner because of a state check");
+        showBanner();
+      } else {
+        hideBanner();
+      }
+    } catch (e) {
+      // Previously uncaught, so a failed check was invisible and left the
+      // banner showing whatever it already showed.
+      Log.e(_tag, "Could not check session state: $e");
     }
   }
 
