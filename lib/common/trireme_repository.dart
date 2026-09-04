@@ -60,8 +60,12 @@ class TriremeRepository {
     if (client != null) {
       _client = client;
       _localEventSubscription?.cancel();
-      _localEventSubscription =
-          client.delugeRpcEvents().listen((e) => _eventsStream?.add(e));
+      _localEventSubscription = client.delugeRpcEvents().listen((event) {
+        var details = event.runtimeType.toString();
+        if (event is TorrentAddedEvent) details += ' id=${event.torrentId}';
+        Log.d(_tag, 'RPC event received: $details');
+        _eventsStream?.add(event);
+      });
     } else {
       _localEventSubscription?.cancel();
       _client?.dispose();
@@ -234,17 +238,22 @@ class TriremeRepository {
     return client.getAddTorrentDefaultOptions();
   }
 
-  Future addTorrentUrl(String url, Map<String, Object> options) {
-    if (url.startsWith("magnet")) {
-      return client.addTorrentMagnet(url, options);
-    } else {
-      return client.addTorrentUrl(url, options);
-    }
+  Future addTorrentUrl(String url, Map<String, Object> options) async {
+    final kind = url.startsWith('magnet') ? 'magnet' : 'URL';
+    Log.d(_tag, 'Add torrent $kind started');
+    final id = kind == 'magnet'
+        ? await client.addTorrentMagnet(url, options)
+        : await client.addTorrentUrl(url, options);
+    Log.d(_tag, 'Add torrent $kind succeeded: id=$id');
+    return id;
   }
 
   Future addTorrentFile(
-      String fileName, String fileDump, Map<String, Object> options) {
-    return client.addTorrentFile(fileName, fileDump, options);
+      String fileName, String fileDump, Map<String, Object> options) async {
+    Log.d(_tag, 'Add torrent file started');
+    final id = await client.addTorrentFile(fileName, fileDump, options);
+    Log.d(_tag, 'Add torrent file succeeded: id=$id');
+    return id;
   }
 
   Future<FilterTree> getFilterTree() {

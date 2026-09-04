@@ -16,12 +16,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:trireme_client/testing.dart';
 import 'package:trireme_client/trireme_client.dart';
 
 import 'package:trireme/common/trireme_repository.dart';
+import 'package:trireme/common/log.dart';
 import 'package:trireme/torrent_list/torrent_item.dart';
+import 'package:trireme/torrent_list/torrent_list_controller.dart';
 
 import '../support/fixtures.dart';
 
@@ -95,6 +99,7 @@ void main() {
   }
 
   setUp(() async {
+    Log.clear();
     daemon = await FakeDelugeDaemon.start();
     daemon.handle('core.get_session_status', (_) => sessionStatus());
     client = TriremeClient('user', 'password', '127.0.0.1',
@@ -222,5 +227,42 @@ void main() {
         isA<DelugeRpcError>()
             .having((e) => e.type, 'type', 'WrappedException')
             .having((e) => e.msg, 'msg', 'no such torrent'));
+  });
+
+  test('records the complete add-event-list-refresh path', () async {
+    final torrents = <String, Object?>{};
+    daemon.handle('core.get_session_state', (_) => torrents.keys.toList());
+    daemon.handle('core.get_torrents_status', (_) => torrents);
+    daemon.handle('core.add_torrent_magnet', (_) {
+      torrents[torrentId] = torrentStatus('Paused');
+      Timer.run(() => daemon.emitEvent('TorrentAddedEvent', [torrentId]));
+      return torrentId;
+    });
+
+    var updates = 0;
+    final controller = TorrentListController(() => updates++, (_) {})
+      ..repository = repository;
+    addTearDown(controller.dispose);
+
+    await waitFor(() => updates > 0, reason: 'the initial list did not load');
+    expect(controller.getItemCount(), 0);
+    Log.clear();
+
+    await repository.addTorrentUrl(
+      'magnet:?xt=urn:btih:$torrentId',
+      <String, Object>{'add_paused': true},
+    );
+    await waitFor(
+      () => controller.getItemCount() == 1,
+      reason: 'the add event did not refresh the list',
+    );
+
+    final lines = Log.entries.map((entry) => entry.toString()).join('\n');
+    expect(lines, contains('Add torrent magnet started'));
+    expect(lines, contains('Add torrent magnet succeeded: id=$torrentId'));
+    expect(lines, contains('RPC event received: TorrentAddedEvent'));
+    expect(lines, contains('List-altering event accepted: TorrentAddedEvent'));
+    expect(lines, contains('List refresh triggered by 1 event'));
+    expect(lines, contains('Full list refresh completed: items=1'));
   });
 }

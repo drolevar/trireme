@@ -47,6 +47,7 @@ class TorrentListController {
 
   StreamSubscription<List<TorrentItem>>? _torrentListUpdateStreamSubscription;
   StreamSubscription? _eventsStreamSubscription;
+  var _refreshSequence = 0;
 
   TorrentListController(
       this.stateUpdateCallback, this.selectedItemsChangedCallback);
@@ -77,13 +78,24 @@ class TorrentListController {
   TorrentItem getItemAt(int index) => _torrentItems[index];
 
   Future getFilteredTorrentList() async {
+    final refresh = ++_refreshSequence;
+    final filterKind = _filterSpec == FilterSpec.all ? 'all' : 'custom';
+    Log.d(
+        _tag,
+        'Full list refresh started: refresh=#$refresh '
+        'filter=$filterKind');
     if (!repository.isReady()) {
       await repository.readiness();
     }
     try {
       _torrentItems =
           await repository.getTorrentList(_filterSpec.toFilterDict());
+      Log.d(
+          _tag,
+          'Full list refresh completed: items=${_torrentItems.length} '
+          'refresh=#$refresh ids=${_torrentItems.map((item) => item.id).toList()}');
     } catch (e) {
+      Log.e(_tag, 'Full list refresh failed: refresh=#$refresh error=$e');
       if (e is DelugeRpcError || e is SocketException) {
         Log.e(_tag, e.toString());
         await Future<void>.delayed(const Duration(seconds: 1));
@@ -108,7 +120,12 @@ class TorrentListController {
 
   void listenForRpcEvents() {
     _eventsStreamSubscription?.cancel();
-    _eventsStreamSubscription = _listEventsStream().listen((_) {
+    _eventsStreamSubscription = _listEventsStream().listen((events) {
+      Log.d(
+          _tag,
+          'List refresh triggered by ${events.length} '
+          'event${events.length == 1 ? '' : 's'}: '
+          '${events.map((event) => event.runtimeType).join(', ')}');
       getFilteredTorrentList();
     });
   }
@@ -117,6 +134,8 @@ class TorrentListController {
     return repository
         .getDelugeRpcEvents()
         .where((e) => isListAlteringEvent(e))
+        .doOnData((event) =>
+            Log.d(_tag, 'List-altering event accepted: ${event.runtimeType}'))
         .bufferTime(const Duration(seconds: 1))
         .where((l) => l.isNotEmpty);
   }
