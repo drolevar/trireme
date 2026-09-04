@@ -20,6 +20,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'package:trireme/common/common.dart';
 
@@ -81,6 +82,11 @@ class _DebugScreenState extends State<DebugScreen> {
             icon: const Icon(Icons.copy),
             tooltip: Strings.debugCopyLog,
             onPressed: entries.isEmpty ? null : _copyLog,
+          ),
+          IconButton(
+            icon: const Icon(Icons.share),
+            tooltip: Strings.debugShareLog,
+            onPressed: entries.isEmpty ? null : _shareLog,
           ),
           IconButton(
             icon: const Icon(Icons.delete_outline),
@@ -226,6 +232,14 @@ class _DebugScreenState extends State<DebugScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(Strings.debugLogCopied)),
     );
+  }
+
+  Future<void> _shareLog() async {
+    // Goes straight through the Android share sheet rather than the system
+    // clipboard -- a clipboard-sync bridge between the device and a desktop
+    // was silently truncating long copies at a fixed size.
+    final text = Log.entries.map((entry) => entry.toString()).join('\n');
+    await SharePlus.instance.share(ShareParams(text: text));
   }
 
   void _clearLog() {

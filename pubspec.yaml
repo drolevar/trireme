@@ -26,6 +26,13 @@ dependencies:
   flutter_svg: "^2.3.0"
   flutter_speed_dial: "^7.0.0"
 
+  # TEMPORARY: diagnostic-only, for sharing debug log captures directly
+  # through the Android share sheet -- the log had been getting cut off at
+  # a suspiciously exact byte count when copied through the clipboard,
+  # which points at some clipboard-sync bridge's size limit, not this app.
+  # Remove before this branch merges.
+  share_plus: "^11.0.0"
+
   duration: "^4.0.3"
 
 dev_dependencies:

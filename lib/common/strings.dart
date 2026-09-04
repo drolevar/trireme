@@ -228,6 +228,7 @@ class Strings {
   static String debugPingDaemon = 'Ping daemon';
   static String debugQuerySessionPaused = 'Query session paused';
   static String debugCopyLog = 'Copy log';
+  static String debugShareLog = 'Share log';
   static String debugClearLog = 'Clear log';
   static String debugLogCopied = 'Log copied to clipboard';
   static String debugNoLog = 'Nothing logged yet';
