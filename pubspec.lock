@@ -618,7 +618,7 @@ packages:
     description:
       path: "."
       ref: diagnose-add-refresh
-      resolved-ref: "0420f1254bf3647e150ee2a43dc095036d9871ce"
+      resolved-ref: b28555910d107bc83dd71675cb4a70c32adb854f
       url: "https://github.com/drolevar/trireme_client.git"
     source: git
     version: "0.0.1"
