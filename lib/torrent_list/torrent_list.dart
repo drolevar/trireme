@@ -48,15 +48,36 @@ class TorrentListState extends State<TorrentList> with TriremeProgressBarMixin {
   }
 
   @override
+  void initState() {
+    super.initState();
+    Log.d(_tag, 'initState (new State object constructed)');
+  }
+
+  @override
+  void activate() {
+    super.activate();
+    // Fires when this Element is reinserted into the tree after being
+    // deactivated -- a GlobalKey-driven reparent, distinct from a dependency
+    // actually changing. It preserves this State object (so the controller
+    // survives), but the framework always calls didChangeDependencies() right
+    // after, whether or not any InheritedWidget it depends on truly changed.
+    Log.d(_tag, 'activate (State object reinserted into the tree)');
+  }
+
+  @override
+  void deactivate() {
+    Log.d(_tag, 'deactivate (State object removed from the tree)');
+    super.deactivate();
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Fires on first attach, and again whenever an ancestor InheritedWidget
-    // this widget depends on notifies -- which includes returning from a
-    // pushed route if that changes what an ancestor (MediaQuery, the
-    // RepositoryProvider) reports. The setter below always resubscribes and
-    // does a full refresh, same instance or not, so if this fires on a
-    // details-screen pop, that alone would explain a torrent turning up
-    // without the daemon-event path ever running.
+    // Fires on first attach, after every activate(), and whenever an ancestor
+    // InheritedWidget this widget depends on notifies. The setter below
+    // always resubscribes and does a full refresh, same instance or not, so
+    // any of those three reasons would explain a torrent turning up without
+    // the daemon-event path ever running.
     Log.d(_tag, 'didChangeDependencies fired');
     controller.repository = RepositoryProvider.repositoryOf(context);
   }

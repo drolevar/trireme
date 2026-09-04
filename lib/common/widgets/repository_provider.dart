@@ -98,6 +98,12 @@ class RepositoryProviderState extends State<_RepositoryProviderInternal>
 
   @override
   Widget build(BuildContext context) {
+    // Logged unconditionally, separate from didChangeDependencies: this
+    // State's InheritedWidget notifies on every build() regardless of the
+    // reason, so if this fires without a preceding didChangeDependencies log,
+    // something rebuilt this State directly (e.g. a reparent higher up)
+    // rather than one of its own declared dependencies actually changing.
+    Log.d(_tag, 'build (produces a new _RepositoryProviderInherited)');
     return _RepositoryProviderInherited(
       state: this,
       child: widget.child,
