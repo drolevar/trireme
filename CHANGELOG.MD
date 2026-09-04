@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- A Debug screen under Settings records recent connection, event, and torrent
+  list refresh activity and can copy it for troubleshooting.
+
 ### Fixed
 - Losing the connection to the daemon is reported again. The "Lost connection
   to daemon" banner could only appear if a screen was opened while the daemon

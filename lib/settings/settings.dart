@@ -21,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:trireme/common/common.dart';
 
 import 'appearance.dart';
+import 'debug.dart';
 import 'servers.dart';
 
 class SettingsList extends StatelessWidget {
@@ -45,6 +46,11 @@ class SettingsList extends StatelessWidget {
             title: Text(Strings.settingsAppearance),
             onTap: () => launchAppearanceSettingsScreen(context),
           ),
+          ListTile(
+            title: Text(Strings.settingsDebug),
+            subtitle: Text(Strings.settingsDebugInfo),
+            onTap: () => launchDebugScreen(context),
+          ),
         ],
       ).toList()),
     );
@@ -61,5 +67,9 @@ class SettingsList extends StatelessWidget {
 
   void launchAppearanceSettingsScreen(BuildContext context) {
     _launchScreen(context, AppearanceSettingsScreen());
+  }
+
+  void launchDebugScreen(BuildContext context) {
+    _launchScreen(context, const DebugScreen());
   }
 }

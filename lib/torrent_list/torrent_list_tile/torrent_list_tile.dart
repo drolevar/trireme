@@ -315,8 +315,12 @@ class TorrentStateProperties {
   }
 }
 
-void launchTorrentDetailScreen(BuildContext context, TorrentItem t) {
-  Navigator.of(context).push<void>(MaterialPageRoute(builder: (context) {
+const _navigationLogTag = "TorrentListNavigation";
+
+void launchTorrentDetailScreen(BuildContext context, TorrentItem t) async {
+  Log.d(_navigationLogTag, 'Opening torrent details: id=${t.id}');
+  await Navigator.of(context).push<void>(MaterialPageRoute(builder: (context) {
     return TorrentDetailPage(t);
   }));
+  Log.d(_navigationLogTag, 'Returned from torrent details: id=${t.id}');
 }

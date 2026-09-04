@@ -9,10 +9,12 @@ dependencies:
   convert: "^3.0.2"
   intl: any
 
+  # TEMPORARY: pinned to the diagnose-add-refresh branch for the missing-
+  # event investigation. Revert to ref: "v1.6.0" before this branch merges.
   trireme_client:
     git:
       url: https://github.com/drolevar/trireme_client.git
-      ref: "v1.6.0"
+      ref: "diagnose-add-refresh"
 
   rxdart: "^0.28.0"
 
@@ -23,6 +25,13 @@ dependencies:
 
   flutter_svg: "^2.3.0"
   flutter_speed_dial: "^7.0.0"
+
+  # TEMPORARY: diagnostic-only, for sharing debug log captures directly
+  # through the Android share sheet -- the log had been getting cut off at
+  # a suspiciously exact byte count when copied through the clipboard,
+  # which points at some clipboard-sync bridge's size limit, not this app.
+  # Remove before this branch merges.
+  share_plus: "^11.0.0"
 
   duration: "^4.0.3"
 

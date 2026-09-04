@@ -56,15 +56,45 @@ class TriremeRepository {
   }
 
   set client(TriremeClient? client) {
+    Log.d(
+        _tag,
+        'client set: null=${client == null} '
+        'sameInstanceAsBefore=${identical(_client, client)}');
     _readinessStream.add(client != null);
     if (client != null) {
       _client = client;
       _localEventSubscription?.cancel();
-      _localEventSubscription =
-          client.delugeRpcEvents().listen((e) => _eventsStream?.add(e));
+      _localEventSubscription = client.delugeRpcEvents().listen((event) {
+        var details = event.runtimeType.toString();
+        if (event is TorrentAddedEvent) details += ' id=${event.torrentId}';
+        Log.d(_tag, 'RPC event received: $details');
+        _eventsStream?.add(event);
+      });
+      Log.d(_tag, 'Event subscription (re)established on this client');
+      // trireme_client's event delivery has been verified correct against a
+      // real Deluge 2.1.2 daemon, for both addTorrentFile and
+      // addTorrentMagnet, using the exact same file that fails in the field.
+      // The one thing that cannot be verified from here is what the actual
+      // remote daemon reports itself to be.
+      client.daemonInfo().then(
+          (info) => Log.d(_tag, 'Connected daemon reports version: $info'),
+          onError: (Object e) =>
+              Log.e(_tag, 'Could not query daemon version: $e'));
     } else {
       _localEventSubscription?.cancel();
-      _client?.dispose();
+      Log.d(_tag, 'Event subscription cancelled (client set to null)');
+      // Deliberately not disposing _client here. The only caller that sets
+      // this to null is ClientProviderState.reInitClient, which sets the
+      // client to null and then, in the same synchronous stretch, calls
+      // client.init() again on that same instance -- init() replaces the
+      // event stream controller before this setter's rebuild-triggered call
+      // even runs (setState schedules the rebuild; it does not run it
+      // inline). Disposing here closed the brand-new controller instead of
+      // the old one, permanently, so no event delivered on this client ever
+      // again after the first pause/resume cycle. Disposal on pause is
+      // already handled directly in ClientProviderState, and changeServer()
+      // disposes the client itself before replacing the whole repository --
+      // this branch has no case left where disposing here is correct.
     }
   }
 
@@ -234,17 +264,22 @@ class TriremeRepository {
     return client.getAddTorrentDefaultOptions();
   }
 
-  Future addTorrentUrl(String url, Map<String, Object> options) {
-    if (url.startsWith("magnet")) {
-      return client.addTorrentMagnet(url, options);
-    } else {
-      return client.addTorrentUrl(url, options);
-    }
+  Future addTorrentUrl(String url, Map<String, Object> options) async {
+    final kind = url.startsWith('magnet') ? 'magnet' : 'URL';
+    Log.d(_tag, 'Add torrent $kind started');
+    final id = kind == 'magnet'
+        ? await client.addTorrentMagnet(url, options)
+        : await client.addTorrentUrl(url, options);
+    Log.d(_tag, 'Add torrent $kind succeeded: id=$id');
+    return id;
   }
 
   Future addTorrentFile(
-      String fileName, String fileDump, Map<String, Object> options) {
-    return client.addTorrentFile(fileName, fileDump, options);
+      String fileName, String fileDump, Map<String, Object> options) async {
+    Log.d(_tag, 'Add torrent file started');
+    final id = await client.addTorrentFile(fileName, fileDump, options);
+    Log.d(_tag, 'Add torrent file succeeded: id=$id');
+    return id;
   }
 
   Future<FilterTree> getFilterTree() {

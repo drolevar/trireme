@@ -219,6 +219,19 @@ class Strings {
   static String settingsDeletingConnectedServer =
       "Cannot delete this server because it is being used";
   static String settingsAppearance = "Appearance";
+  static String settingsDebug = 'Debug';
+  static String settingsDebugInfo = 'Connection state and in-app log';
+  static String debugClientAttached = 'Client attached';
+  static String debugClientDisposed = 'Client disposed';
+  static String debugErrorsSeen = 'Errors seen';
+  static String debugLastError = 'Last error';
+  static String debugPingDaemon = 'Ping daemon';
+  static String debugQuerySessionPaused = 'Query session paused';
+  static String debugCopyLog = 'Copy log';
+  static String debugShareLog = 'Share log';
+  static String debugClearLog = 'Clear log';
+  static String debugLogCopied = 'Log copied to clipboard';
+  static String debugNoLog = 'Nothing logged yet';
   static String settingsAppThemeColor = "App theme color";
   static String settingsDarkMode = "Dark Mode";
   static String settingsDarkModeSystem = "Follow system";

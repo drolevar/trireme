@@ -19,8 +19,7 @@
 import 'package:flutter/material.dart';
 import 'package:trireme_client/trireme_client.dart';
 
-import '../trireme_repository.dart';
-import 'client_provider.dart';
+import 'package:trireme/common/common.dart';
 
 class RepositoryProvider extends StatelessWidget {
   final Widget child;
@@ -63,6 +62,8 @@ class _RepositoryProviderInternal extends StatefulWidget {
 
 class RepositoryProviderState extends State<_RepositoryProviderInternal>
     with WidgetsBindingObserver {
+  static const _tag = "RepositoryProviderState";
+
   TriremeRepository? repository;
   TriremeClient? _client;
 
@@ -82,12 +83,27 @@ class RepositoryProviderState extends State<_RepositoryProviderInternal>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _client = ClientProvider.of(context).client;
+    var newClient = ClientProvider.of(context).client;
+    // This State's own InheritedWidget notifies unconditionally
+    // (updateShouldNotify always returns true), so anything that rebuilds
+    // this State -- for any reason -- re-notifies every screen that calls
+    // RepositoryProvider.repositoryOf(context), not just this one.
+    Log.d(
+        _tag,
+        'didChangeDependencies fired: newClientIsNull=${newClient == null} '
+        'sameInstanceAsBefore=${identical(_client, newClient)}');
+    _client = newClient;
     repository?.client = _client;
   }
 
   @override
   Widget build(BuildContext context) {
+    // Logged unconditionally, separate from didChangeDependencies: this
+    // State's InheritedWidget notifies on every build() regardless of the
+    // reason, so if this fires without a preceding didChangeDependencies log,
+    // something rebuilt this State directly (e.g. a reparent higher up)
+    // rather than one of its own declared dependencies actually changing.
+    Log.d(_tag, 'build (produces a new _RepositoryProviderInherited)');
     return _RepositoryProviderInherited(
       state: this,
       child: widget.child,

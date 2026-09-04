@@ -52,6 +52,10 @@ class ClientProviderState extends State<ClientProvider>
   TriremeClient? get client => _client;
 
   void setClient(TriremeClient? client) {
+    Log.d(
+        _tag,
+        'setClient called: null=${client == null} '
+        'sameInstanceAsBefore=${identical(_client, client)}');
     setState(() {
       _client = client;
     });
@@ -84,12 +88,14 @@ class ClientProviderState extends State<ClientProvider>
   }
 
   void reInitClient() async {
+    Log.d(_tag, 'reInitClient started (app resumed)');
     var client = _client;
     setClient(null);
     try {
       await client?.init();
+      Log.d(_tag, 'reInitClient: client.init() succeeded');
     } catch (e) {
-      Log.e(_tag, e.toString());
+      Log.e(_tag, 'reInitClient: client.init() failed: $e');
     }
     setClient(client);
   }
