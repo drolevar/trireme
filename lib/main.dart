@@ -17,11 +17,19 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:trireme_client/trireme_client.dart' as trireme_client;
 
 import 'package:trireme/home/home.dart';
 import 'package:trireme/common/common.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  // Diagnostic only: routes trireme_client's low-level socket/event tracing
+  // into this app's own debug log, so a capture from the in-app log viewer
+  // shows both layers on one timeline.
+  trireme_client.debugLogSink =
+      (tag, message) => Log.d('trireme_client.$tag', message);
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
