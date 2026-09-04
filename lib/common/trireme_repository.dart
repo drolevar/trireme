@@ -56,6 +56,10 @@ class TriremeRepository {
   }
 
   set client(TriremeClient? client) {
+    Log.d(
+        _tag,
+        'client set: null=${client == null} '
+        'sameInstanceAsBefore=${identical(_client, client)}');
     _readinessStream.add(client != null);
     if (client != null) {
       _client = client;
@@ -66,8 +70,10 @@ class TriremeRepository {
         Log.d(_tag, 'RPC event received: $details');
         _eventsStream?.add(event);
       });
+      Log.d(_tag, 'Event subscription (re)established on this client');
     } else {
       _localEventSubscription?.cancel();
+      Log.d(_tag, 'Event subscription cancelled (client set to null)');
       _client?.dispose();
     }
   }
