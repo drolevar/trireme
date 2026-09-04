@@ -83,7 +83,18 @@ class TriremeRepository {
     } else {
       _localEventSubscription?.cancel();
       Log.d(_tag, 'Event subscription cancelled (client set to null)');
-      _client?.dispose();
+      // Deliberately not disposing _client here. The only caller that sets
+      // this to null is ClientProviderState.reInitClient, which sets the
+      // client to null and then, in the same synchronous stretch, calls
+      // client.init() again on that same instance -- init() replaces the
+      // event stream controller before this setter's rebuild-triggered call
+      // even runs (setState schedules the rebuild; it does not run it
+      // inline). Disposing here closed the brand-new controller instead of
+      // the old one, permanently, so no event delivered on this client ever
+      // again after the first pause/resume cycle. Disposal on pause is
+      // already handled directly in ClientProviderState, and changeServer()
+      // disposes the client itself before replacing the whole repository --
+      // this branch has no case left where disposing here is correct.
     }
   }
 
