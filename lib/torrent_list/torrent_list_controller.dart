@@ -103,7 +103,7 @@ class TorrentListController {
       Log.d(
           _tag,
           'Full list refresh completed: items=${_torrentItems.length} '
-          'refresh=#$refresh ids=${_torrentItems.map((item) => item.id).toList()}');
+          'refresh=#$refresh');
     } catch (e) {
       Log.e(_tag, 'Full list refresh failed: refresh=#$refresh error=$e');
       if (e is DelugeRpcError || e is SocketException) {
