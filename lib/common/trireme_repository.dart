@@ -71,6 +71,15 @@ class TriremeRepository {
         _eventsStream?.add(event);
       });
       Log.d(_tag, 'Event subscription (re)established on this client');
+      // trireme_client's event delivery has been verified correct against a
+      // real Deluge 2.1.2 daemon, for both addTorrentFile and
+      // addTorrentMagnet, using the exact same file that fails in the field.
+      // The one thing that cannot be verified from here is what the actual
+      // remote daemon reports itself to be.
+      client.daemonInfo().then(
+          (info) => Log.d(_tag, 'Connected daemon reports version: $info'),
+          onError: (Object e) =>
+              Log.e(_tag, 'Could not query daemon version: $e'));
     } else {
       _localEventSubscription?.cancel();
       Log.d(_tag, 'Event subscription cancelled (client set to null)');
