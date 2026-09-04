@@ -49,10 +49,20 @@ class TorrentListController {
   StreamSubscription? _eventsStreamSubscription;
   var _refreshSequence = 0;
 
+  // Diagnostic only: lets the repository setter log whether it was handed the
+  // same instance again, without reading the late _repository field before it
+  // has ever been assigned.
+  Object? _lastRepositoryForLogging;
+
   TorrentListController(
       this.stateUpdateCallback, this.selectedItemsChangedCallback);
 
   set repository(TriremeRepository repository) {
+    Log.d(
+        _tag,
+        'repository set: same instance as before='
+        '${identical(_lastRepositoryForLogging, repository)}');
+    _lastRepositoryForLogging = repository;
     _repository = repository;
     listenForTorrentListUpdates();
     listenForRpcEvents();

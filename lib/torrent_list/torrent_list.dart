@@ -39,6 +39,8 @@ class TorrentList extends StatefulWidget {
 }
 
 class TorrentListState extends State<TorrentList> with TriremeProgressBarMixin {
+  static const _tag = "TorrentListState";
+
   late TorrentListController controller;
 
   TorrentListState() {
@@ -48,6 +50,14 @@ class TorrentListState extends State<TorrentList> with TriremeProgressBarMixin {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    // Fires on first attach, and again whenever an ancestor InheritedWidget
+    // this widget depends on notifies -- which includes returning from a
+    // pushed route if that changes what an ancestor (MediaQuery, the
+    // RepositoryProvider) reports. The setter below always resubscribes and
+    // does a full refresh, same instance or not, so if this fires on a
+    // details-screen pop, that alone would explain a torrent turning up
+    // without the daemon-event path ever running.
+    Log.d(_tag, 'didChangeDependencies fired');
     controller.repository = RepositoryProvider.repositoryOf(context);
   }
 
@@ -59,6 +69,10 @@ class TorrentListState extends State<TorrentList> with TriremeProgressBarMixin {
     }
     if (oldWidget.sortCriterion != widget.sortCriterion ||
         oldWidget.reverseSort != widget.reverseSort) {
+      Log.d(
+          _tag,
+          'Sort changed: criterion=${widget.sortCriterion} '
+          'reverse=${widget.reverseSort}');
       controller.sort(widget.sortCriterion, widget.reverseSort);
     }
   }
